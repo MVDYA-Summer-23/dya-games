@@ -9,7 +9,7 @@ defmodule Games.GuessingGame do
 
   defp string_to_int(string), do: String.trim(string) |> String.to_integer()
 
-  def play() do
+  def play_numbers() do
     answer = Enum.random(@numbers)
     guess = IO.gets("Guess a number between 1 and 10: ") |> string_to_int()
     check_guess(answer, guess)
