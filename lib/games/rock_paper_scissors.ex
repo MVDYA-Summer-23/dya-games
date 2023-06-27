@@ -1,36 +1,35 @@
 defmodule Games.RockPaperScissors do
+  @spec play :: :ok
   def play do
     IO.puts("Let's play Rock, Paper, Scissors!")
     choice = IO.gets("Choose rock, paper, or scissors: ") |> String.trim()
     computer_choice = Enum.random(["rock", "paper", "scissors"])
-    check_choice(choice, computer_choice)
+    IO.puts(check_choice(choice, computer_choice))
   end
 
-  defp check_choice(choice, computer_choice) do
+  @spec check_choice(String.t(), String.t()) :: String.t()
+  def check_choice(choice, computer_choice) do
     if choice === computer_choice do
-      IO.puts("It's a tie!")
+      "It's a tie!"
     else
-      case choice do
-        "rock" ->
-          if computer_choice === "paper" do
-            IO.puts("You lose! paper beats rock.")
-          else
-            IO.puts("You win! rock beats scissors.")
-          end
+      case {choice, computer_choice} do
+        {"rock", "paper"} ->
+          "You lose! paper beats rock."
 
-        "paper" ->
-          if computer_choice === "scissors" do
-            IO.puts("You lose! scissors beats paper.")
-          else
-            IO.puts("You win! paper beats rock.")
-          end
+        {"paper", "scissors"} ->
+          "You lose! scissors beats paper."
 
-        "scissors" ->
-          if computer_choice === "rock" do
-            IO.puts("You lose! rock beats scissors.")
-          else
-            IO.puts("You win! scissors beats paper")
-          end
+        {"scissors", "rock"} ->
+          "You lose! rock beats scissors."
+
+        {"rock", "scissors"} ->
+          "You win! rock beats scissors."
+
+        {"paper", "rock"} ->
+          "You win! paper beats rock."
+
+        {"scissors", "paper"} ->
+          "You win! scissors beats paper."
       end
     end
   end

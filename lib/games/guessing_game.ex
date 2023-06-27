@@ -17,9 +17,9 @@ defmodule Games.GuessingGame do
 
   def play_words() do
     IO.puts("Let's play a word guessing game. Are you ready?")
-    ready = IO.gets("y/n: ") |> String.trim()
+    ready = IO.gets("y/n: ") |> String.trim() |> String.downcase()
 
-    if ready === "y" do
+    if ready in ["y", "yes"] do
       {answer, hint} = Enum.random(@words)
       IO.puts("Okay, so the word has #{String.length(answer)} letters and the hint is: #{hint}")
       guess = IO.gets("Enter your guess: ") |> String.trim()
