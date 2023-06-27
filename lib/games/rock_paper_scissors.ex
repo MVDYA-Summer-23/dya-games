@@ -1,4 +1,14 @@
 defmodule Games.RockPaperScissors do
+  @moduledoc """
+  Rock, Paper, Scissors game logic
+
+  As this involves non-deterministic side effects from player interaction,
+  there are no public functions to test.
+  """
+
+  @doc """
+  Play a game of Rock, Paper, Scissors from the iex shell
+  """
   @spec play :: :ok
   def play do
     IO.puts("Let's play Rock, Paper, Scissors!")

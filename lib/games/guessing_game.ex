@@ -7,14 +7,24 @@ defmodule Games.GuessingGame do
 
   @numbers 1..10
 
-  defp string_to_int(string), do: String.trim(string) |> String.to_integer()
+  @moduledoc """
+  Guessing game logic with games using numbers or words
+  """
 
+  @doc """
+  Play a number guessing game
+  """
+  @spec play_numbers :: :ok
   def play_numbers() do
     answer = Enum.random(@numbers)
     guess = IO.gets("Guess a number between 1 and 10: ") |> string_to_int()
     check_guess(answer, guess)
   end
 
+  @doc """
+  Play a word guessing game
+  """
+  @spec play_words :: :ok
   def play_words() do
     IO.puts("Let's play a word guessing game. Are you ready?")
     ready = IO.gets("y/n: ") |> String.trim() |> String.downcase()
@@ -29,24 +39,27 @@ defmodule Games.GuessingGame do
     end
   end
 
-  defp check_guess(answer, guess, chances \\ 4) do
-    if answer === guess do
-      IO.puts("Correct!")
-    else
-      IO.puts("Incorrect.")
+  @spec string_to_int(String.t()) :: integer()
+  defp string_to_int(string), do: String.trim(string) |> String.to_integer()
 
-      if chances > 0 do
-        if Enum.all?([answer, guess], &is_integer(&1)) do
-          (answer > guess && "Too Low!") ||
-            "Too High!"
-            |> IO.puts()
-        end
-      else
-        IO.puts("You lose. The answer was #{answer}")
+  @spec check_guess(String.t() | integer, String.t() | integer) :: :ok
+  defp check_guess(answer, guess, chances \\ 4)
+  defp check_guess(answer, answer, _chances), do: IO.puts("Correct!")
+
+  defp check_guess(answer, guess, chances) do
+    IO.puts("Incorrect.")
+
+    if chances > 0 do
+      if Enum.all?([answer, guess], &is_integer(&1)) do
+        (answer > guess && "Too Low!") ||
+          "Too High!"
+          |> IO.puts()
       end
-
-      new_guess = IO.gets("Enter your guess: ") |> string_to_int()
-      check_guess(answer, new_guess, chances - 1)
+    else
+      IO.puts("You lose. The answer was #{answer}")
     end
+
+    new_guess = IO.gets("Enter your guess: ") |> string_to_int()
+    check_guess(answer, new_guess, chances - 1)
   end
 end

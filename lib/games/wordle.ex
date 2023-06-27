@@ -1,4 +1,25 @@
 defmodule Games.Wordle do
+  @moduledoc """
+  Wordle game logic
+  """
+
+  @doc """
+  Compare two strings using a color scheme for each character, and return an atom list with colors for each corresponding character
+  :green matches a character with correct location
+  :yellow matches a character with incorrect location
+  :gray indicates no matching characters
+
+  ## Examples
+
+      iex> feedback("dream", "dream")
+      [:green, :green, :green, :green, :green]
+
+      iex> feedback("dream", "cream")
+      [:gray, :green, :green, :green, :green]
+
+      iex> feedback("dream", "smear")
+      [:gray, :yellow, :green, :green, :yellow]
+  """
   @spec feedback(String.t(), String.t()) :: list()
   def feedback(target, guess) do
     # Count occurrences of each letter in the target word
