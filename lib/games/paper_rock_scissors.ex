@@ -1,19 +1,21 @@
-defmodule Games.RockPaperScissors do
+defmodule Games.PaperRockScissors do
+  @game_title Games.paper_rock_scissors()
+
   @moduledoc """
-  Rock, Paper, Scissors game logic
+  Paper, Rock, Scissors game logic
 
   As this involves non-deterministic side effects from player interaction,
   there are no public functions to test.
   """
 
   @doc """
-  Play a game of Rock, Paper, Scissors from the iex shell
+  Play a game of Paper, Rock, Scissors from the iex shell
   """
   @spec play :: :ok
   def play do
-    IO.puts("Let's play Rock, Paper, Scissors!")
+    IO.puts("Let's play #{@game_title}}!")
     choice = IO.gets("Choose rock, paper, or scissors: ") |> String.trim()
-    computer_choice = Enum.random(["rock", "paper", "scissors"])
+    computer_choice = Enum.random(["paper", "rock", "scissors"])
     IO.puts(check_choice(choice, computer_choice))
   end
 

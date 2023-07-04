@@ -1,16 +1,15 @@
 defmodule Games do
-  @available_games ["guess a random number or word", "paper, rock, scissors", "wordle"]
+  @wordle "Wordle"
+  @guess_number "Guess a Number"
+  @paper_rock_scissors "Paper, Rock, Scissors"
 
-  @moduledoc """
-  Welcome to the Games collection
-  """
-  @doc "Show which games are available to play"
-  @spec play() :: [any()]
-  def play do
-    IO.puts("Welcome\nChoose a game...")
+  def wordle, do: @wordle
+  def guess_number, do: @guess_number
+  def paper_rock_scissors, do: @paper_rock_scissors
 
-    Enum.with_index(@available_games, fn game, index ->
-      IO.puts("   #{index + 1}: #{game}")
-    end)
+  @spec start :: :ok
+  @doc "Automatically start the Games CLI"
+  def start do
+    GamesCLI.start()
   end
 end

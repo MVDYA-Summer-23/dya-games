@@ -20,6 +20,52 @@ defmodule Games.Wordle do
       iex> feedback("dream", "smear")
       [:gray, :yellow, :green, :green, :yellow]
   """
+  def play(rounds \\ 5) do
+    target = get_answer()
+    guess = get_guess(rounds)
+    play(target, guess, rounds - 1)
+  end
+
+  def play(target, _guess, 0) do
+    Owl.IO.puts("You lose! The answer was #{target}")
+  end
+
+  def play(target, guess, rounds) do
+    case feedback(target, guess) do
+      [:green, :green, :green, :green, :green] ->
+        Owl.IO.puts("You win! The answer was #{target}")
+
+      feedback ->
+        response = Enum.map(feedback, &Atom.to_string(&1)) |> Enum.join("") |> String.upcase()
+        Owl.IO.puts("#{response}")
+        guess = get_guess(rounds)
+        play(target, guess, rounds - 1)
+    end
+  end
+
+  def get_answer() do
+    Enum.random(["bingo", "train", "sleek", "house", "flyer"])
+  end
+
+  def get_guess(rounds) do
+    prompt =
+      if rounds === 5 do
+        Owl.IO.puts(["You have #{rounds} attempts"])
+        "Enter a five letter word: "
+      else
+        "#{rounds}: "
+      end
+
+    guess = Owl.IO.input(label: prompt)
+
+    if String.length(guess) !== 5 do
+      Owl.IO.puts("That's not five letters. Try again.")
+      get_guess(rounds)
+    else
+      guess
+    end
+  end
+
   @spec feedback(String.t(), String.t()) :: list()
   def feedback(target, guess) do
     # Count occurrences of each letter in the target word
