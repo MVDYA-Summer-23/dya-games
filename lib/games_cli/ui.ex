@@ -1,6 +1,6 @@
 defmodule GamesCLI.UI do
-  @fg_colors GamesCLI.colors().foreground
-  @bg_colors GamesCLI.colors().background
+  @fg_colors GamesCLI.UI.Colors.values().foreground
+  @bg_colors GamesCLI.UI.Colors.values().background
   @space_maker fn n -> if(n === 0, do: "", else: String.duplicate(" ", n)) end
   @spaces Enum.reduce(0..10, %{}, fn n, acc -> Map.put(acc, n, @space_maker.(n)) end)
 

@@ -1,8 +1,9 @@
 defmodule GamesCLI.Wordle do
   alias Owl.{Box, Data}
 
-  @colors GamesCLI.colors().foreground
+  @colors GamesCLI.UI.Colors.values().foreground
 
+  # This is the only game title scenario that doesn't break the bounding box while still centering
   @wordle_letters [
     Data.tag("W", [@colors.green, :bright]),
     " ",
@@ -19,9 +20,10 @@ defmodule GamesCLI.Wordle do
 
   @game_header_text Enum.concat([["***   "], @wordle_letters, ["   ***"]])
 
-  def play() do
+  def start() do
     show_game_header()
     show_game_rules()
+    play()
   end
 
   def show_game_header() do
@@ -65,5 +67,9 @@ defmodule GamesCLI.Wordle do
     ]
     |> Box.new(max_width: 70, padding_x: 2, padding_y: 1)
     |> Owl.IO.puts()
+  end
+
+  def play do
+    "HOLA"
   end
 end
