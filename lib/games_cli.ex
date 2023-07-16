@@ -1,11 +1,12 @@
 defmodule GamesCLI do
-  alias Games.{PaperRockScissors, GuessingGame}
-  alias GamesCLI.{Wordle, UI}
-  alias Owl.{Data, Box}
+  alias Games.{PaperRockScissors}
+  alias GamesCLI.{Wordle, UI, GuessingGame}
+  alias Owl.{Data}
 
   # These are generated to provide static, pre-evaluated values since case statements,
   # for example, cannot be used to evaluate values at runtime.
   @guess_number Games.guess_number()
+  @guess_word Games.guess_word()
   @wordle Games.wordle()
   @paper_rock_scissors Games.paper_rock_scissors()
 
@@ -18,32 +19,24 @@ defmodule GamesCLI do
   CLI logic
   """
 
+  @doc "start the Games program in the CLI"
   def start() do
-    show_main_header()
+    UI.show_main_header(@main_header_text)
     show_main_menu()
   end
 
-  def show_main_header() do
-    IO.puts("")
-
-    Box.new(@main_header_text,
-      border_style: :solid_rounded,
-      min_width: 70,
-      horizontal_align: :center,
-      padding_y: 1,
-      border_tag: :cyan
-    )
-    |> Owl.IO.puts()
-  end
-
+  @doc "Ask the player which game they'd like to play, and load the selected game"
   def show_main_menu() do
     Owl.IO.puts("\nWhat would you like to play?\n")
 
-    selection = Owl.IO.select([@guess_number, @wordle, @paper_rock_scissors, "Exit"])
+    selection = Owl.IO.select([@guess_number, @guess_word, @wordle, @paper_rock_scissors, "Exit"])
 
     case selection do
       @guess_number ->
-        GuessingGame.play_numbers()
+        GuessingGame.start_game(:numbers)
+
+      @guess_word ->
+        GuessingGame.start_game(:words)
 
       @wordle ->
         Wordle.start()

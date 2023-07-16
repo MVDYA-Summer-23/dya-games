@@ -1,6 +1,7 @@
 defmodule GamesCLI.Wordle do
-  alias Owl.{Box, Data}
+  alias Owl.Data
   alias Games.Wordle
+  alias GamesCLI.UI
 
   @colors GamesCLI.UI.Colors.values().foreground
 
@@ -16,78 +17,55 @@ defmodule GamesCLI.Wordle do
 
   @game_header_text Enum.concat([["***   "], @wordle_letters, ["   ***"]])
 
+  @game_rules %{
+    header: "Rules",
+    description: [
+      """
+      Try to guess a random 6-letter English word in six tries!
+      For each guess, you'll see colored feedback for each letter:\n
+      """,
+      "* ",
+      Data.tag("green", :green),
+      ": you guessed correctly\n",
+      "* ",
+      Data.tag("yellow", :yellow),
+      ": the letter is in the word, but in the wrong place\n",
+      "* ",
+      Data.tag("red", :red),
+      ": the letter is not in the word."
+    ]
+  }
+
   def start() do
-    show_game_header()
-    show_game_rules()
+    UI.show_game_header(@game_header_text)
+    UI.show_game_rules(@game_rules)
     play()
   end
 
-  def show_game_header() do
-    Box.new(@game_header_text,
-      border_style: :double,
-      min_width: 70,
-      horizontal_align: :center,
-      padding_y: 1,
-      border_tag: :cyan
-    )
-    |> Owl.IO.puts()
-  end
-
-  def show_game_rules(word_length \\ 5) do
-    [
-      Box.new("Rules",
-        padding_bottom: 1,
-        min_width: 64,
-        border_style: :none,
-        horizontal_align: :center
-      ),
-      Box.new(
-        [
-          """
-          Try to guess a random #{word_length}-letter English word in six tries!
-          For each guess, you'll see colored feedback for each letter:\n
-          """,
-          "* ",
-          Data.tag("green", :green),
-          ": you guessed correctly\n",
-          "* ",
-          Data.tag("yellow", :yellow),
-          ": the letter is in the word, but in the wrong place\n",
-          "* ",
-          Data.tag("red", :red),
-          ": the letter is not in the word."
-        ],
-        min_width: 64,
-        border_style: :none
-      )
-    ]
-    |> Box.new(max_width: 70, padding_x: 2, padding_y: 1)
-    |> Owl.IO.puts()
-  end
-
   def play(rounds \\ 6) do
-    target = Wordle.get_answer()
+    answer = Wordle.get_answer()
+    IO.inspect(answer, label: "Answer")
     guess = get_guess(rounds)
-    play(target, guess, rounds)
+    play(answer, guess, rounds)
   end
 
-  defp play(target, _guess, 0) do
-    Owl.IO.puts("\nYou lose! The answer was #{target}")
-    play_again?()
+  def play(answer, _guess, 0) do
+    Owl.IO.puts("\nYou lose! The answer was #{answer}")
+    replay_game?()
   end
 
-  defp play(target, guess, rounds) do
-    case Wordle.get_feedback(target, guess) do
+  def play(answer, guess, rounds) do
+    case Wordle.get_feedback(answer, guess) do
       [:green, :green, :green, :green, :green] = feedback ->
-        show_guess(target, guess, feedback)
+        show_guess(answer, guess, feedback)
         Owl.IO.puts("\nYou win!")
-        play_again?()
+        replay_game?()
 
       feedback ->
         rounds_left = rounds - 1
-        show_guess(target, guess, feedback)
+        show_guess(answer, guess, feedback)
         next_guess = if rounds_left !== 0, do: get_guess(rounds_left), else: nil
-        play(target, next_guess, rounds_left)
+        play(answer, next_guess, rounds_left)
     end
   end
 
@@ -102,6 +80,8 @@ defmodule GamesCLI.Wordle do
     end
   end
 
+  defp replay_game?(), do: UI.play_again?(fn -> __MODULE__.play() end)
+
   defp show_guess(_target, guess, feedback) do
     guess_list = String.graphemes(guess) |> Enum.map(&String.upcase/1)
 
@@ -110,17 +90,5 @@ defmodule GamesCLI.Wordle do
       |> GamesCLI.UI.style_letter_list(block: true, bold: true)
 
     Owl.IO.puts("#{response}")
-  end
-
-  defp play_again?() do
-    again = Owl.IO.confirm(message: Data.tag("Play again?", @colors.yellow), default: true)
-
-    case again do
-      true ->
-        start()
-
-      false ->
-        Games.start()
-    end
   end
 end

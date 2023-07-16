@@ -1,4 +1,6 @@
 defmodule GamesCLI.UI do
+  alias Owl.{Box, Data}
+
   @fg_colors GamesCLI.UI.Colors.values().foreground
   @bg_colors GamesCLI.UI.Colors.values().background
   @space_maker fn n -> if(n === 0, do: "", else: String.duplicate(" ", n)) end
@@ -6,6 +8,65 @@ defmodule GamesCLI.UI do
 
   @reset IO.ANSI.reset()
   @bold IO.ANSI.bright()
+
+  @doc "Create a container with a top margin, rounded corners, a cyan border, and absolute-centered text"
+  def show_main_header(header_text) do
+    IO.puts("")
+
+    Box.new(header_text,
+      border_style: :solid_rounded,
+      min_width: 70,
+      horizontal_align: :center,
+      padding_y: 1,
+      border_tag: :cyan
+    )
+    |> Owl.IO.puts()
+  end
+
+  @doc "Create a container with a cyan border and absolute-centered text "
+  def show_game_header(header_text) do
+    Box.new(header_text,
+      border_style: :double,
+      min_width: 70,
+      horizontal_align: :center,
+      padding_y: 1,
+      border_tag: :cyan
+    )
+    |> Owl.IO.puts()
+  end
+
+  @doc "Create a container with a default-colored border, a center-aligned title, and left-aligned instructions"
+  def show_game_rules(%{header: header_text, description: description}) do
+    [
+      Box.new(header_text,
+        padding_bottom: 1,
+        min_width: 64,
+        border_style: :none,
+        horizontal_align: :center
+      ),
+      Box.new(
+        description,
+        min_width: 64,
+        border_style: :none
+      )
+    ]
+    |> Box.new(max_width: 70, padding_x: 2, padding_y: 1)
+    |> Owl.IO.puts()
+  end
+
+  def play_again?(restart_game) do
+    again = Owl.IO.confirm(message: Data.tag("Play again?", @fg_colors.yellow), default: true)
+
+    case again do
+      true ->
+        restart_game.()
+
+      false ->
+        Games.start()
+    end
+  end
+
+  def get_guess(label), do: Owl.IO.input(label: label)
 
   @doc """
   Returns a formatted ANSI code for a block-style string with bold weight, dark text and colored background for a provided string and color.
